@@ -53,6 +53,7 @@ class QuienesSomos extends Component {
             <FlatList
               data={this.state.actividades}
               keyExtractor={(item) => item.id.toString()}
+              scrollEnabled={false}
               renderItem={({ item }) => (
                 <List.Item
                   title={item.nombre}

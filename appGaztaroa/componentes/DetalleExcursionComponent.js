@@ -1,7 +1,8 @@
 import { Component } from 'react';
-import { View, StyleSheet, ImageBackground } from 'react-native';
-import { Card, Text } from 'react-native-paper';
+import { View, StyleSheet, ImageBackground, ScrollView, FlatList } from 'react-native';
+import { Card, Text, Divider, IconButton } from 'react-native-paper';
 import { EXCURSIONES } from '../comun/excursiones';
+import { COMENTARIOS } from '../comun/comentarios';
 
 function RenderExcursion(props) {
   const excursion = props.excursion;
@@ -10,7 +11,7 @@ function RenderExcursion(props) {
     return (
       <Card style={styles.card}>
         <ImageBackground
-          source={require('./imagenes/40A\u00f1os.png')}
+          source={require('./imagenes/40Años.png')}
           style={styles.imageBackground}
         >
           <Text style={styles.titulo}>{excursion.nombre}</Text>
@@ -18,6 +19,17 @@ function RenderExcursion(props) {
         <Card.Content>
           <Text style={styles.descripcion}>{excursion.descripcion}</Text>
         </Card.Content>
+        <View style={styles.iconoContainer}>
+          <IconButton
+            icon={props.favorita ? 'heart' : 'heart-outline'}
+            size={28}
+            onPress={() =>
+              props.favorita
+                ? console.log('La excursión ya se encuentra entre las favoritas')
+                : props.onPress()
+            }
+          />
+        </View>
       </Card>
     );
   } else {
@@ -25,17 +37,85 @@ function RenderExcursion(props) {
   }
 }
 
+function RenderComentario(props) {
+  const comentarios = props.comentarios;
+
+  const renderEstrellas = (valoracion) => {
+    const llenas = '★'.repeat(valoracion);
+    const vacias = '☆'.repeat(5 - valoracion);
+    return llenas + vacias;
+  };
+
+  const formatearFecha = (diaStr) => {
+    const fecha = new Date(diaStr.replace(/\s/g, ''));
+    return fecha.toLocaleDateString('es-ES', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }) + ', ' + fecha.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+  };
+
+  return (
+    <Card style={styles.card}>
+      <Card.Title
+        title="Comentarios"
+        titleStyle={styles.cardTitulo}
+        style={styles.cardTitleContainer}
+      />
+      <Card.Content>
+        <FlatList
+          data={comentarios}
+          keyExtractor={(item) => item.id.toString()}
+          scrollEnabled={false}
+          ItemSeparatorComponent={() => <Divider style={styles.divider} />}
+          renderItem={({ item }) => (
+            <View style={styles.comentarioItem}>
+              <Text style={styles.comentarioTexto}>{item.comentario}</Text>
+              <Text style={styles.estrellas}>{renderEstrellas(item.valoracion)}</Text>
+              <Text style={styles.autor}>-- {item.autor}, {formatearFecha(item.dia)}</Text>
+            </View>
+          )}
+        />
+      </Card.Content>
+    </Card>
+  );
+}
+
 class DetalleExcursion extends Component {
   constructor(props) {
     super(props);
     this.state = {
       excursiones: EXCURSIONES,
+      comentarios: COMENTARIOS,
+      favoritos: [],
     };
+  }
+
+  marcarFavorito(excursionId) {
+    this.setState({ favoritos: this.state.favoritos.concat(excursionId) });
   }
 
   render() {
     const { excursionId } = this.props.route.params;
-    return <RenderExcursion excursion={this.state.excursiones[+excursionId]} />;
+    return (
+      <ScrollView>
+        <RenderExcursion
+          excursion={this.state.excursiones[+excursionId]}
+          favorita={this.state.favoritos.some((el) => el === excursionId)}
+          onPress={() => this.marcarFavorito(excursionId)}
+        />
+        <RenderComentario
+          comentarios={this.state.comentarios.filter(
+            (comentario) => comentario.excursionId === +excursionId
+          )}
+        />
+      </ScrollView>
+    );
   }
 }
 
@@ -60,6 +140,36 @@ const styles = StyleSheet.create({
   descripcion: {
     marginTop: 20,
     marginBottom: 20,
+  },
+  iconoContainer: {
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  cardTitulo: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  cardTitleContainer: {
+    alignItems: 'center',
+  },
+  comentarioItem: {
+    paddingVertical: 10,
+  },
+  comentarioTexto: {
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  estrellas: {
+    fontSize: 16,
+    color: '#f5a623',
+    marginBottom: 4,
+  },
+  autor: {
+    fontSize: 12,
+    color: '#666',
+  },
+  divider: {
+    marginVertical: 4,
   },
 });
 
