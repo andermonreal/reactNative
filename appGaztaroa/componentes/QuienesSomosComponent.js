@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { ScrollView, FlatList, StyleSheet } from 'react-native';
+import { ScrollView, FlatList, StyleSheet, Image } from 'react-native';
 import { Card, List, Text } from 'react-native-paper';
 import { ACTIVIDADES } from '../comun/actividades';
+import { baseUrl } from '../comun/comun';
 
 function Historia() {
   return (
@@ -60,7 +61,7 @@ class QuienesSomos extends Component {
                   description={item.descripcion}
                   left={() => (
                     <List.Image
-                      source={require('./imagenes/40A\u00f1os.png')}
+                      source={{ uri: baseUrl + item.imagen }}
                       style={styles.listImage}
                     />
                   )}

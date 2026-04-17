@@ -1,17 +1,18 @@
-import { Component } from "react";
-import { View, Platform, StyleSheet, Image, Text, Pressable } from "react-native";
-import { NavigationContainer, DrawerActions } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
+import { Component } from 'react';
+import { View, Platform, StyleSheet, Image, Text, Pressable } from 'react-native';
+import Constants from 'expo-constants';
+import { NavigationContainer, DrawerActions } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Constants from "expo-constants";
-import Calendario from "./CalendarioComponent";
-import DetalleExcursion from "./DetalleExcursionComponent";
-import Home from "./HomeComponent";
-import QuienesSomos from "./QuienesSomosComponent";
-import Contacto from "./ContactoComponent";
-import { EXCURSIONES } from "../comun/excursiones";
+import Home from './HomeComponent';
+import Calendario from './CalendarioComponent';
+import DetalleExcursion from './DetalleExcursionComponent';
+import QuienesSomos from './QuienesSomosComponent';
+import Contacto from './ContactoComponent';
+import { EXCURSIONES } from '../comun/excursiones';
+import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -22,7 +23,7 @@ function BotonMenu(props) {
       <MaterialCommunityIcons
         name="menu"
         size={40}
-        color={Platform.OS === 'ios' ? '#015afc' : 'white'}
+        color={Platform.OS === 'ios' ? colorGaztaroaOscuro : 'white'}
       />
     </Pressable>
   );
@@ -72,7 +73,7 @@ class Campobase extends Component {
         initialRouteName="Home"
         screenOptions={{
           headerTintColor: '#fff',
-          headerStyle: { backgroundColor: '#015afc' },
+          headerStyle: { backgroundColor: colorGaztaroaOscuro },
           headerTitleStyle: { color: '#fff' },
         }}
       >
@@ -93,15 +94,12 @@ class Campobase extends Component {
         initialRouteName="ListaExcursiones"
         screenOptions={{
           headerTintColor: '#fff',
-          headerStyle: { backgroundColor: '#015afc' },
+          headerStyle: { backgroundColor: colorGaztaroaOscuro },
           headerTitleStyle: { color: '#fff' },
         }}
       >
         <Stack.Screen
           name="ListaExcursiones"
-          options={({ navigation }) =>
-            this.menuHeaderOptions('Calendario Gaztaroa', navigation)
-          }
         >
           {(props) => (
             <Calendario {...props} excursiones={this.state.excursiones} />
@@ -125,7 +123,7 @@ class Campobase extends Component {
         initialRouteName="QuienesSomos"
         screenOptions={{
           headerTintColor: '#fff',
-          headerStyle: { backgroundColor: '#015afc' },
+          headerStyle: { backgroundColor: colorGaztaroaOscuro },
           headerTitleStyle: { color: '#fff' },
         }}
       >
@@ -146,7 +144,7 @@ class Campobase extends Component {
         initialRouteName="Contacto"
         screenOptions={{
           headerTintColor: '#fff',
-          headerStyle: { backgroundColor: '#015afc' },
+          headerStyle: { backgroundColor: colorGaztaroaOscuro },
           headerTitleStyle: { color: '#fff' },
         }}
       >
@@ -168,7 +166,7 @@ class Campobase extends Component {
         drawerContent={(props) => <CustomDrawerContent {...props} />}
         screenOptions={{
           headerShown: false,
-          drawerStyle: { backgroundColor: '#c2d3da' },
+          drawerStyle: { backgroundColor: colorGaztaroaClaro },
         }}
       >
         <Drawer.Screen
@@ -232,7 +230,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   drawerHeader: {
-    backgroundColor: '#015afc',
+    backgroundColor: colorGaztaroaOscuro,
     height: 100,
     flexDirection: 'row',
     alignItems: 'center',
