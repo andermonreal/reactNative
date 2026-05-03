@@ -1,8 +1,9 @@
 import { Component } from 'react';
-import { ScrollView, FlatList, StyleSheet } from 'react-native';
+import { ScrollView, FlatList, StyleSheet, View } from 'react-native';
 import { Card, List, Text } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { baseUrl } from '../comun/comun';
+import { IndicadorActividad } from './IndicadorActividadComponent';
 
 function Historia() {
   return (
@@ -38,6 +39,21 @@ const mapStateToProps = (state) => ({
 
 class QuienesSomos extends Component {
   render() {
+    const renderActividadItem = ({ item }) => (
+      <List.Item
+        title={item.nombre}
+        description={item.descripcion}
+        left={() => (
+          <List.Image
+            source={{ uri: baseUrl + item.imagen }}
+            style={styles.listImage}
+          />
+        )}
+        titleStyle={styles.listTitle}
+        descriptionNumberOfLines={10}
+      />
+    );
+
     return (
       <ScrollView>
         <Historia />
@@ -48,25 +64,18 @@ class QuienesSomos extends Component {
             style={styles.cardTitle}
           />
           <Card.Content>
-            <FlatList
-              data={this.props.actividades.actividades}
-              keyExtractor={(item) => item.id.toString()}
-              scrollEnabled={false}
-              renderItem={({ item }) => (
-                <List.Item
-                  title={item.nombre}
-                  description={item.descripcion}
-                  left={() => (
-                    <List.Image
-                      source={{ uri: baseUrl + item.imagen }}
-                      style={styles.listImage}
-                    />
-                  )}
-                  titleStyle={styles.listTitle}
-                  descriptionNumberOfLines={10}
-                />
-              )}
-            />
+            {this.props.actividades.isLoading ? (
+              <IndicadorActividad />
+            ) : this.props.actividades.errMess ? (
+              <Text>{this.props.actividades.errMess}</Text>
+            ) : (
+              <FlatList
+                data={this.props.actividades.actividades}
+                keyExtractor={(item) => item.id.toString()}
+                scrollEnabled={false}
+                renderItem={renderActividadItem}
+              />
+            )}
           </Card.Content>
         </Card>
       </ScrollView>

@@ -3,10 +3,18 @@ import { View, StyleSheet, ImageBackground, ScrollView, FlatList } from 'react-n
 import { Card, Text, Divider, IconButton } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { baseUrl } from '../comun/comun';
+import { postFavorito } from '../redux/ActionCreators';
+import { IndicadorActividad } from './IndicadorActividadComponent';
 
 function RenderExcursion(props) {
   const excursion = props.excursion;
 
+  if (props.isLoading) {
+    return <IndicadorActividad />;
+  }
+  if (props.errMess) {
+    return <View><Text>{props.errMess}</Text></View>;
+  }
   if (excursion != null) {
     return (
       <Card style={styles.card}>
@@ -32,25 +40,26 @@ function RenderExcursion(props) {
         </View>
       </Card>
     );
-  } else {
-    return <View />;
   }
+  return <View />;
 }
 
 function RenderComentario(props) {
   const comentarios = props.comentarios;
 
-  const renderEstrellas = (valoracion) => {
-    return '★'.repeat(valoracion) + '☆'.repeat(5 - valoracion);
-  };
+  const renderEstrellas = (valoracion) =>
+    '★'.repeat(valoracion) + '☆'.repeat(5 - valoracion);
 
   const formatearFecha = (diaStr) => {
     const fecha = new Date(diaStr.replace(/\s/g, ''));
-    return fecha.toLocaleDateString('es-ES', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-    }) + ', ' + fecha.toLocaleTimeString('es-ES', {
-      hour: '2-digit', minute: '2-digit', second: '2-digit',
-    });
+    return (
+      fecha.toLocaleDateString('es-ES', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+      }) + ', ' +
+      fecha.toLocaleTimeString('es-ES', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+      })
+    );
   };
 
   return (
@@ -82,18 +91,16 @@ function RenderComentario(props) {
 const mapStateToProps = (state) => ({
   excursiones: state.excursiones,
   comentarios: state.comentarios,
+  favoritos: state.favoritos,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  postFavorito: (excursionId) => dispatch(postFavorito(excursionId)),
 });
 
 class DetalleExcursion extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      favoritos: [],
-    };
-  }
-
   marcarFavorito(excursionId) {
-    this.setState({ favoritos: this.state.favoritos.concat(excursionId) });
+    this.props.postFavorito(excursionId);
   }
 
   render() {
@@ -102,7 +109,9 @@ class DetalleExcursion extends Component {
       <ScrollView>
         <RenderExcursion
           excursion={this.props.excursiones.excursiones[+excursionId]}
-          favorita={this.state.favoritos.some((el) => el === excursionId)}
+          isLoading={this.props.excursiones.isLoading}
+          errMess={this.props.excursiones.errMess}
+          favorita={this.props.favoritos.favoritos.some((el) => el === excursionId)}
           onPress={() => this.marcarFavorito(excursionId)}
         />
         <RenderComentario
@@ -142,4 +151,4 @@ const styles = StyleSheet.create({
   divider: { marginVertical: 4 },
 });
 
-export default connect(mapStateToProps)(DetalleExcursion);
+export default connect(mapStateToProps, mapDispatchToProps)(DetalleExcursion);
