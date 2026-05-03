@@ -1,8 +1,7 @@
 import { Component } from 'react';
 import { View, StyleSheet, ImageBackground, ScrollView, FlatList } from 'react-native';
 import { Card, Text, Divider, IconButton } from 'react-native-paper';
-import { EXCURSIONES } from '../comun/excursiones';
-import { COMENTARIOS } from '../comun/comentarios';
+import { connect } from 'react-redux';
 import { baseUrl } from '../comun/comun';
 
 function RenderExcursion(props) {
@@ -42,22 +41,15 @@ function RenderComentario(props) {
   const comentarios = props.comentarios;
 
   const renderEstrellas = (valoracion) => {
-    const llenas = '★'.repeat(valoracion);
-    const vacias = '☆'.repeat(5 - valoracion);
-    return llenas + vacias;
+    return '★'.repeat(valoracion) + '☆'.repeat(5 - valoracion);
   };
 
   const formatearFecha = (diaStr) => {
     const fecha = new Date(diaStr.replace(/\s/g, ''));
     return fecha.toLocaleDateString('es-ES', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
     }) + ', ' + fecha.toLocaleTimeString('es-ES', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
     });
   };
 
@@ -87,12 +79,15 @@ function RenderComentario(props) {
   );
 }
 
+const mapStateToProps = (state) => ({
+  excursiones: state.excursiones,
+  comentarios: state.comentarios,
+});
+
 class DetalleExcursion extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      excursiones: EXCURSIONES,
-      comentarios: COMENTARIOS,
       favoritos: [],
     };
   }
@@ -106,12 +101,12 @@ class DetalleExcursion extends Component {
     return (
       <ScrollView>
         <RenderExcursion
-          excursion={this.state.excursiones[+excursionId]}
+          excursion={this.props.excursiones.excursiones[+excursionId]}
           favorita={this.state.favoritos.some((el) => el === excursionId)}
           onPress={() => this.marcarFavorito(excursionId)}
         />
         <RenderComentario
-          comentarios={this.state.comentarios.filter(
+          comentarios={this.props.comentarios.comentarios.filter(
             (comentario) => comentario.excursionId === +excursionId
           )}
         />
@@ -121,9 +116,7 @@ class DetalleExcursion extends Component {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    margin: 8,
-  },
+  card: { margin: 8 },
   imageBackground: {
     width: '100%',
     height: 200,
@@ -138,40 +131,15 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingHorizontal: 8,
   },
-  descripcion: {
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  iconoContainer: {
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  cardTitulo: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  cardTitleContainer: {
-    alignItems: 'center',
-  },
-  comentarioItem: {
-    paddingVertical: 10,
-  },
-  comentarioTexto: {
-    fontSize: 14,
-    marginBottom: 4,
-  },
-  estrellas: {
-    fontSize: 16,
-    color: '#f5a623',
-    marginBottom: 4,
-  },
-  autor: {
-    fontSize: 12,
-    color: '#666',
-  },
-  divider: {
-    marginVertical: 4,
-  },
+  descripcion: { marginTop: 20, marginBottom: 20 },
+  iconoContainer: { alignItems: 'center', marginBottom: 8 },
+  cardTitulo: { textAlign: 'center', fontWeight: 'bold' },
+  cardTitleContainer: { alignItems: 'center' },
+  comentarioItem: { paddingVertical: 10 },
+  comentarioTexto: { fontSize: 14, marginBottom: 4 },
+  estrellas: { fontSize: 16, color: '#f5a623', marginBottom: 4 },
+  autor: { fontSize: 12, color: '#666' },
+  divider: { marginVertical: 4 },
 });
 
-export default DetalleExcursion;
+export default connect(mapStateToProps)(DetalleExcursion);

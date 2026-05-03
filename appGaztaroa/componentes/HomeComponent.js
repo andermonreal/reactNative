@@ -1,16 +1,13 @@
 import { Component } from 'react';
 import { ScrollView, View, StyleSheet, ImageBackground } from 'react-native';
 import { Card, Text } from 'react-native-paper';
-import { EXCURSIONES } from '../comun/excursiones';
-import { CABECERAS } from '../comun/cabeceras';
-import { ACTIVIDADES } from '../comun/actividades';
+import { connect } from 'react-redux';
 import { baseUrl } from '../comun/comun';
 
 function RenderItem({ item }) {
   if (!item) {
     return <View />;
   }
-
   return (
     <Card style={styles.card}>
       <ImageBackground
@@ -26,31 +23,32 @@ function RenderItem({ item }) {
   );
 }
 
-class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      excursiones: EXCURSIONES,
-      cabeceras: CABECERAS,
-      actividades: ACTIVIDADES,
-    };
-  }
+const mapStateToProps = (state) => ({
+  excursiones: state.excursiones,
+  cabeceras: state.cabeceras,
+  actividades: state.actividades,
+});
 
+class Home extends Component {
   render() {
     return (
       <ScrollView>
-        <RenderItem item={this.state.cabeceras.filter((item) => item.destacado)[0]} />
-        <RenderItem item={this.state.excursiones.filter((item) => item.destacado)[0]} />
-        <RenderItem item={this.state.actividades.filter((item) => item.destacado)[0]} />
+        <RenderItem
+          item={this.props.cabeceras.cabeceras.filter((item) => item.destacado)[0]}
+        />
+        <RenderItem
+          item={this.props.excursiones.excursiones.filter((item) => item.destacado)[0]}
+        />
+        <RenderItem
+          item={this.props.actividades.actividades.filter((item) => item.destacado)[0]}
+        />
       </ScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  card: {
-    margin: 8,
-  },
+  card: { margin: 8 },
   imageBackground: {
     width: '100%',
     height: 200,
@@ -67,10 +65,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     margin: 10,
   },
-  descripcion: {
-    marginTop: 20,
-    marginBottom: 20,
-  },
+  descripcion: { marginTop: 20, marginBottom: 20 },
 });
 
-export default Home;
+export default connect(mapStateToProps)(Home);

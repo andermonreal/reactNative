@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { ScrollView, FlatList, StyleSheet, Image } from 'react-native';
+import { Component } from 'react';
+import { ScrollView, FlatList, StyleSheet } from 'react-native';
 import { Card, List, Text } from 'react-native-paper';
-import { ACTIVIDADES } from '../comun/actividades';
+import { connect } from 'react-redux';
 import { baseUrl } from '../comun/comun';
 
 function Historia() {
@@ -32,14 +32,11 @@ function Historia() {
   );
 }
 
-class QuienesSomos extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      actividades: ACTIVIDADES,
-    };
-  }
+const mapStateToProps = (state) => ({
+  actividades: state.actividades,
+});
 
+class QuienesSomos extends Component {
   render() {
     return (
       <ScrollView>
@@ -52,7 +49,7 @@ class QuienesSomos extends Component {
           />
           <Card.Content>
             <FlatList
-              data={this.state.actividades}
+              data={this.props.actividades.actividades}
               keyExtractor={(item) => item.id.toString()}
               scrollEnabled={false}
               renderItem={({ item }) => (
@@ -78,25 +75,12 @@ class QuienesSomos extends Component {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    margin: 8,
-  },
-  cardTitle: {
-    alignItems: 'center',
-  },
-  titulo: {
-    textAlign: 'center',
-  },
-  parrafo: {
-    marginBottom: 12,
-  },
-  listImage: {
-    width: 48,
-    height: 48,
-  },
-  listTitle: {
-    fontWeight: 'bold',
-  },
+  card: { margin: 8 },
+  cardTitle: { alignItems: 'center' },
+  titulo: { textAlign: 'center' },
+  parrafo: { marginBottom: 12 },
+  listImage: { width: 48, height: 48 },
+  listTitle: { fontWeight: 'bold' },
 });
 
-export default QuienesSomos;
+export default connect(mapStateToProps)(QuienesSomos);

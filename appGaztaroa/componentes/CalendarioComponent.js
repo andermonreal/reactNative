@@ -2,7 +2,12 @@ import { Component } from 'react';
 import { FlatList, View, Image, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { List, Divider } from 'react-native-paper';
+import { connect } from 'react-redux';
 import { baseUrl } from '../comun/comun';
+
+const mapStateToProps = (state) => ({
+  excursiones: state.excursiones,
+});
 
 class Calendario extends Component {
   render() {
@@ -36,7 +41,7 @@ class Calendario extends Component {
     return (
       <SafeAreaView style={styles.container}>
         <FlatList
-          data={this.props.excursiones}
+          data={this.props.excursiones.excursiones}
           renderItem={renderCalendarioItem}
           keyExtractor={(item) => item.id.toString()}
         />
@@ -46,24 +51,11 @@ class Calendario extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  imagen: {
-    width: 40,
-    height: 40,
-    alignSelf: 'center',
-  },
-  contenido: {
-    paddingRight: 8,
-  },
-  titulo: {
-    fontSize: 16,
-  },
-  descripcion: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
+  container: { flex: 1 },
+  imagen: { width: 40, height: 40, alignSelf: 'center' },
+  contenido: { paddingRight: 8 },
+  titulo: { fontSize: 16 },
+  descripcion: { fontSize: 14, lineHeight: 20 },
 });
 
-export default Calendario;
+export default connect(mapStateToProps)(Calendario);
